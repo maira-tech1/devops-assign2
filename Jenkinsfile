@@ -42,16 +42,14 @@ pipeline {
             }
         }
 
-        stage('Health Check') {
+stage('Health Check') {
             steps {
-                sh '''
-                    echo "Checking backend..."
-                    sleep 10
-                    curl -s http://localhost:4000 || echo "Backend not ready yet"
-                '''
+                echo 'Waiting for services...'
+                sleep 20
+                // Check the frontend port you set: 8086
+                sh 'curl -s http://localhost:8086 || echo "Frontend warming up..."'
             }
         }
-    }
 
     post {
         success {
