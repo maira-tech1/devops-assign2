@@ -1,4 +1,5 @@
 services:
+
   backend-ci:
     image: node:18
     container_name: mern-backend-ci
@@ -10,7 +11,7 @@ services:
     environment:
       - PORT=5000
       - MONGODB_URI=mongodb://mongo-ci:27017/ecommerce
-      - CORS_ORIGIN=http://65.0.98.152:8086
+      - CORS_ORIGIN=http://43.205.112.218:8086
       - CLOUDINARY_CLOUD_NAME=du8yb6oog
       - CLOUDINARY_API_KEY=229732255972711
       - CLOUDINARY_API_SECRET=P6m2rezzIfOrd0bihGdlA1b8evw
@@ -48,11 +49,11 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - mongo_data_ci:/data/db
+      - mongo_ci_data:/data/db
     restart: always
 
 volumes:
-  mongo_data_ci:
+  mongo_ci_data:
 
 networks:
   default:
