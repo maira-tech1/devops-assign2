@@ -6,7 +6,50 @@ pipeline {
     }
 
     environment {
-        COMPOSE_PROJECT_NAME = "mern_ci_app"
+        COMPOSE_PROJECT_NAME = "mern_ci_app"pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo 'Cloning repository...'
+                checkout scm
+            }
+        }
+
+        stage('Clean Previous Deployment') {
+            steps {
+                echo 'Stopping any previous CI deployment...'
+                sh 'docker-compose -f docker-compose-ci.yml down --remove-orphans || true'
+            }
+        }
+
+        stage('Build and Start') {
+            steps {
+                echo 'Starting containerized application...'
+                sh 'docker-compose -f docker-compose-ci.yml up -d --build'
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                echo 'Waiting for services to start...'
+                sh 'sleep 30'
+                sh 'docker-compose -f docker-compose-ci.yml ps'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully! Application is up.'
+        }
+        failure {
+            echo 'Pipeline failed!'
+            sh 'docker-compose -f docker-compose-ci.yml down || true'
+        }
+    }
+}
     }
 
     stages {

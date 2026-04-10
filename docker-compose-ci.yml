@@ -1,0 +1,59 @@
+services:
+  backend-ci:
+    image: node:18
+    container_name: mern-backend-ci
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "4001:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo-ci:27017/ecommerce
+      - CORS_ORIGIN=http://65.0.98.152:8086
+      - CLOUDINARY_CLOUD_NAME=du8yb6oog
+      - CLOUDINARY_API_KEY=229732255972711
+      - CLOUDINARY_API_SECRET=P6m2rezzIfOrd0bihGdlA1b8evw
+      - ACCESS_TOKEN_SECRET=supersecretaccesstoken123abc456def789
+      - ACCESS_TOKEN_EXPIRY=35m
+      - REFRESH_TOKEN_SECRET=supersecretrefreshtoken987zyx654wvu321
+      - REFRESH_TOKEN_EXPIRY=7d
+      - PADDLE_VENDOR_ID=28406
+      - PADDLE_API_KEY=2bc0d31918106a01bf1cc783aae56cd0fd84c8354acd7c13bc
+      - PADDLE_CLIENT_KEY=test_c7dd607a04ea6498ad89712ffc6
+      - PADDLE_SANDBOX=true
+      - RTE_API_KEY=vdnw93ida3ayry2xqkhxcf45pesizfa5yl6qsd4gfk6o7233
+      - NODE_ENV=production
+    depends_on:
+      - mongo-ci
+    command: sh -c "npm install && npm start"
+    restart: always
+
+  frontend-ci:
+    image: node:18
+    container_name: mern-frontend-ci
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8086:5173"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - backend-ci
+    restart: always
+
+  mongo-ci:
+    image: mongo:6
+    container_name: mern-mongo-ci
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_ci:/data/db
+    restart: always
+
+volumes:
+  mongo_data_ci:
+
+networks:
+  default:
+    driver: bridge
