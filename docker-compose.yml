@@ -6,17 +6,17 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "4000:3000"  # Host 4000 → Container 3000
+      - "4000:5000"
     environment:
-      - PORT=3000
-      - CORS_ORIGIN=http://65.2.128.157:8085
-      - MONGODB_URI=mongodb+srv://admin:1234@ecommerce.zqtpp.mongodb.net
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/ecommerce
+      - CORS_ORIGIN=http://localhost:8085
       - CLOUDINARY_CLOUD_NAME=du8yb6oog
       - CLOUDINARY_API_KEY=229732255972711
       - CLOUDINARY_API_SECRET=P6m2rezzIfOrd0bihGdlA1b8evw
-      - ACCESS_TOKEN_SECRET=4589865FDR98T5R6T565665@!@$4556578ERERasdd
+      - ACCESS_TOKEN_SECRET=supersecretaccesstoken123abc456def789
       - ACCESS_TOKEN_EXPIRY=35m
-      - REFRESH_TOKEN_SECRET=89E8RE56R5EREIROI859DFD56E5R65@!&%$65Eghg
+      - REFRESH_TOKEN_SECRET=supersecretrefreshtoken987zyx654wvu321
       - REFRESH_TOKEN_EXPIRY=7d
       - PADDLE_VENDOR_ID=28406
       - PADDLE_API_KEY=2bc0d31918106a01bf1cc783aae56cd0fd84c8354acd7c13bc
@@ -24,6 +24,8 @@ services:
       - PADDLE_SANDBOX=true
       - RTE_API_KEY=vdnw93ida3ayry2xqkhxcf45pesizfa5yl6qsd4gfk6o7233
       - NODE_ENV=production
+    depends_on:
+      - mongo
     command: sh -c "npm install && npm start"
     restart: always
 
@@ -34,26 +36,23 @@ services:
     volumes:
       - ./frontend:/app
     ports:
-      - "8085:5173"  # Host 8085 → Container 5173
+      - "8085:5173"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     depends_on:
       - backend
     restart: always
 
-  test:
-    image: node:18
-    container_name: mern-tester
-    working_dir: /app
-    
+  mongo:
+    image: mongo:6
+    container_name: mern-mongo
+    ports:
+      - "27017:27017"
     volumes:
-      - ./tests:/app/tests
-    environment:
-      - MONGODB_URI=mongodb+srv://admin:1234@ecommerce.zqtpp.mongodb.net
-      - NODE_ENV=test
-      
-    command: sh -c "npm install && npm test" 
-    depends_on:
-      - backend 
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
 
 networks:
   default:

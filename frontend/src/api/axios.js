@@ -1,10 +1,10 @@
 import axios from 'axios';
-const BASE_URL = 'http://65.2.128.157:4000/api/v1';  // for deployment on jenkins
-// const BASE_URL = 'https://mernecommercebackend-production.up.railway.app/api/v1'; // for production
 
+const BASE_URL = 'http://localhost:5000/api/v1';
 
 export default axios.create({
-    baseURL: BASE_URL
+    baseURL: BASE_URL,
+    withCredentials: true  // ← ADD THIS
 });
 
 export const axiosPrivate = axios.create({
