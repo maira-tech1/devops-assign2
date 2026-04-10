@@ -10,21 +10,20 @@ pipeline {
     }
 
     stages {
-        stage('Checkout MERN App') {
+       stage('Checkout MERN App') {
             steps {
                 echo 'Cloning MERN App...'
-                checkout([
-                    $class: 'GitSCM', 
-                    branches: [[name: '*/main']], 
-                    userRemoteConfigs: [[url: 'https://github.com/A5tab/E-Commerce-Docker-Container.git']]
-                ])
-                script {
-                    env.COMMIT_HASH = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-                    env.COMMIT_AUTHOR = sh(script: 'git show -s --format="%an" HEAD', returnStdout: true).trim()
-                    echo "Building Commit: ${env.COMMIT_HASH} by ${env.COMMIT_AUTHOR}"
+                // We are telling Jenkins to put the MERN code in a sub-folder called 'app'
+                dir('app') {
+                    checkout([
+                        $class: 'GitSCM', 
+                        branches: [[name: '*/main']], 
+                        userRemoteConfigs: [[url: 'https://github.com/A5tab/E-Commerce-Docker-Container.git']]
+                    ])
                 }
             }
         }
+        
 
         stage('Check & Clean Docker') {
             steps {
