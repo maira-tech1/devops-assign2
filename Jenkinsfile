@@ -1,62 +1,55 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node18' 
-    }
-
     environment {
         COMPOSE_PROJECT_NAME = "mern_ci_app"
+        REPO_URL = "https://github.com/maira-tech1/devops-assign2.git"
     }
 
     stages {
-       stage('Checkout MERN App') {
+
+        stage('Checkout') {
             steps {
-                echo 'Cloning MERN App...'
-                // We are telling Jenkins to put the MERN code in a sub-folder called 'app'
-                dir('app') {
-                    checkout([
-                        $class: 'GitSCM', 
-                        branches: [[name: '*/main']], 
-                        userRemoteConfigs: [[url: 'https://github.com/A5tab/E-Commerce-Docker-Container.git']]
-                    ])
-                }
+                echo 'Cloning repository from GitHub...'
+                git branch: 'main', url: "${REPO_URL}"
             }
         }
-        
 
-        stage('Check & Clean Docker') {
+        stage('Clean Previous Containers') {
             steps {
+                echo 'Stopping and removing any previous CI containers...'
                 sh '''
-                    docker ps -aq --filter "name=mern-" | xargs -r docker rm -f || true
                     docker compose -f docker-compose-ci.yml down --volumes --remove-orphans || true
+                    docker ps -aq --filter "name=mern-.*-ci" | xargs -r docker rm -f || true
                 '''
             }
         }
 
         stage('Build and Start') {
             steps {
-                // Using the specific CI file you showed in your screenshot
+                echo 'Building and launching containerized MERN app...'
                 sh 'docker compose -f docker-compose-ci.yml up -d'
             }
         }
 
         stage('Health Check') {
             steps {
-                echo 'Waiting for services to start...'
-                sleep 20
-                // Checking port 8086 as per your docker-compose-ci.yml
-                sh 'curl -s http://localhost:8086 || echo "App is still loading..."'
+                echo 'Waiting for services to initialize...'
+                sleep(time: 20, unit: 'SECONDS')
+                sh 'docker ps --filter "name=mern-.*-ci"'
+                sh 'docker compose -f docker-compose-ci.yml logs --tail=20 backend-ci || true'
             }
         }
+
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'Pipeline completed! MERN app is up on ports 4001 (backend) and 8086 (frontend).'
         }
         failure {
-            echo 'Pipeline failed! Check the logs above.'
+            echo 'Pipeline failed. Check logs above.'
+            sh 'docker compose -f docker-compose-ci.yml logs --tail=50 || true'
         }
     }
 }
