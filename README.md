@@ -1,5 +1,4 @@
-  Excited to share my Ecommerce WebApp I built to learn and enhance my development skills. I had started working on this long time ago but kept going deeper, improving things, and holding back from posting until I was happy with it. It's still not "perfect", but I learned a lot building it — and it's finally live!
-
+part2 test
 
 
 
