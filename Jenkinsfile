@@ -30,33 +30,34 @@ pipeline {
             steps {
                 sh '''
                     docker ps -aq --filter "name=mern-" | xargs -r docker rm -f || true
-                    docker compose down --volumes --remove-orphans || true
+                    docker compose -f docker-compose-ci.yml down --volumes --remove-orphans || true
                 '''
             }
         }
 
-      stage('Build and Start') {
+        stage('Build and Start') {
             steps {
-                // We use -f to specify the exact CI filename
+                // Using the specific CI file you showed in your screenshot
                 sh 'docker compose -f docker-compose-ci.yml up -d'
             }
         }
 
-stage('Health Check') {
+        stage('Health Check') {
             steps {
-                echo 'Waiting for services...'
+                echo 'Waiting for services to start...'
                 sleep 20
-                // Check the frontend port you set: 8086
-                sh 'curl -s http://localhost:8086 || echo "Frontend warming up..."'
+                // Checking port 8086 as per your docker-compose-ci.yml
+                sh 'curl -s http://localhost:8086 || echo "App is still loading..."'
             }
         }
+    }
 
     post {
         success {
             echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline failed! Check the logs above.'
         }
     }
 }
