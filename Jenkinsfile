@@ -35,11 +35,10 @@ pipeline {
             }
         }
 
-        stage('Build and Start') {
+      stage('Build and Start') {
             steps {
-                // Ensure you are using 'docker compose' (v2) or 'docker-compose' (v1)
-                sh 'docker compose build'
-                sh 'docker compose up -d'
+                // We use -f to specify the exact CI filename
+                sh 'docker compose -f docker-compose-ci.yml up -d'
             }
         }
 
