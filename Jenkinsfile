@@ -19,7 +19,7 @@ pipeline {
             steps {
                 echo 'Stopping and removing any previous CI containers...'
                 sh '''
-                    docker compose -f docker-compose-ci.yml down --volumes --remove-orphans || true
+                    docker compose -f docker-compose-ci.yml down --remove-orphans || true
                     docker ps -aq --filter "name=mern-.*-ci" | xargs -r docker rm -f || true
                 '''
             }
