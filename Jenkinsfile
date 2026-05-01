@@ -171,7 +171,7 @@ ${testOutput.take(8000)}
 """
 
                 emailext(
-                    to           : mairamalyk13@gmail.com,
+                    to           : "mairamalyk13@gmail.com",
                     subject      : subject,
                     body         : body,
                     mimeType     : 'text/html',
