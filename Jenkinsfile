@@ -1,9 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node18'
-    }
+
 
     environment {
         COMPOSE_PROJECT_NAME = "mern_ci_app"
