@@ -11,7 +11,7 @@ services:
     environment:
       - PORT=5000
       - MONGODB_URI=mongodb://mongo-ci:27017/ecommerce
-      - CORS_ORIGIN=http://43.205.112.218:8086
+      - CORS_ORIGIN=http://3.109.132.164:8086
       - CLOUDINARY_CLOUD_NAME=du8yb6oog
       - CLOUDINARY_API_KEY=229732255972711
       - CLOUDINARY_API_SECRET=P6m2rezzIfOrd0bihGdlA1b8evw
